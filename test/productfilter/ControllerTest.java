@@ -5,7 +5,6 @@
  */
 package productfilter;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import org.junit.Test;
 import org.mockito.Matchers;
@@ -14,6 +13,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import java.util.Collection;
+import static org.junit.Assert.assertEquals;
 import static productfilter.Controller.TAG_CONTROLLER;
 
 /**
@@ -32,8 +32,9 @@ public class ControllerTest {
         Logger logger = mock(Logger.class);
         Controller controller = new Controller(input, output, logger);
         
-        Product product1 = new Product(1, "dress", Color.RED, new BigDecimal(200));
-        Product product2 = new Product(1, "skirt", Color.BLUE, new BigDecimal(100));
+        Product product1 = mock(Product.class);
+        Product product2 = mock(Product.class);
+        
         Collection<Product> allProducts = new ArrayList<>();
         allProducts.add(product1);
         allProducts.add(product2);
@@ -60,8 +61,8 @@ public class ControllerTest {
         Logger logger = mock(Logger.class);
         Controller controller = new Controller(input, output, logger);
 
-        Product product1 = new Product(1, "dress", Color.RED, new BigDecimal(200));
-        Product product2 = new Product(1, "skirt", Color.BLUE, new BigDecimal(100));
+        Product product1 = mock(Product.class);
+        Product product2 = mock(Product.class);
         Collection<Product> allProducts = new ArrayList<>();
         allProducts.add(product1);
         allProducts.add(product2);
@@ -101,15 +102,48 @@ public class ControllerTest {
     
     @Test
     public void testNothingPassedToOutputIfExceptionThrownWhenObtainingProductData() throws ObtainFailedException {
-        Input input = mock(Input.class);
-        Output output = mock(Output.class);
-        Logger logger = mock(Logger.class);
+        Input input = new InputDummy();
+        OutputSpy output = new OutputSpy();
+        Logger logger = new LoggerDummy();
         Controller controller = new Controller(input, output, logger);
 
-        ObtainFailedException obtainFailedException = new ObtainFailedException();
-        when(input.obtainProducts()).thenThrow(obtainFailedException);
         controller.select(null);
 
-        verify(output, times(0)).postSelectedProducts(Matchers.anyCollectionOf(Product.class));
+        assertEquals(0, output.postSelectedProductsCallCount);
+        
+    }
+    
+    private class InputDummy implements Input {
+
+        @Override
+        public Collection<Product> obtainProducts() throws ObtainFailedException {
+            throw new ObtainFailedException();
+        }
+        
+    }
+    
+    private class OutputSpy implements Output {
+        private int postSelectedProductsCallCount = 0;
+        
+        @Override
+        public void postSelectedProducts(Collection<Product> products) {
+            postSelectedProductsCallCount++;
+        }
+        
+        public int getpostSelectedProductsCallCount() {
+            return postSelectedProductsCallCount;
+        }
+    }
+    
+    private class LoggerDummy implements Logger {
+
+        @Override
+        public void setLevel(String level) {
+        }
+
+        @Override
+        public void log(String tag, String message) {
+        }
+        
     }
 }

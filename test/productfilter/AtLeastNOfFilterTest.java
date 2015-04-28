@@ -6,8 +6,6 @@
 
 package productfilter;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -21,27 +19,7 @@ import static org.mockito.Mockito.when;
  *
  * @author xorsag2
  */
-public class AtLeastNOfFilterTest {
-    
-    public AtLeastNOfFilterTest() {
-    }
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
-
+public class AtLeastNOfFilterTest { 
     /**
      * Test of passes method, of class AtLeastNOfFilter.
      */
@@ -94,9 +72,7 @@ public class AtLeastNOfFilterTest {
         int n = 2;        
         AtLeastNOfFilter parentFilter = new AtLeastNOfFilter(n, childFailFilter, childPassFilter);
         assertFalse(parentFilter.passes(product));
-        
     }
-    
     
     @Test(expected = IllegalArgumentException.class) 
     public void testConstructorIllegalArgumentException() {
